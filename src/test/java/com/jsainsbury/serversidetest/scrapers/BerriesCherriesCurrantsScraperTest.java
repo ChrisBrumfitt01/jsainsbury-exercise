@@ -3,7 +3,6 @@ package com.jsainsbury.serversidetest.scrapers;
 import com.jsainsbury.serversidetest.model.ProductSummary;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,22 +32,36 @@ public class BerriesCherriesCurrantsScraperTest {
 
 
     @Mock private WebScraper webScraper;
-
     @Mock private Document document;
 
-    @Mock private Element body;
-    @Mock private Element productLister;
-    @Mock private Element gridItem1;
-    @Mock private Element gridItem2;
+    private Element body;
 
     @InjectMocks
     private BerriesCherriesCurrantsScraper scraper;
 
+
+    private void buildHTMLStub() {
+        Element product1Link = new Element("a").attr("abs:href", PRODUCT1_URL);
+        Element product1Title = new Element("div").addClass("productNameAndPromotions").text(PRODUCT1_NAME);
+        Element gridItem1 = new Element("div").addClass("gridItem").insertChildren(0, product1Title, product1Link);
+
+        Element product2Link = new Element("a").attr("abs:href", PRODUCT2_URL);
+        Element product2Title = new Element("div").addClass("productNameAndPromotions").text(PRODUCT2_NAME);
+        Element gridItem2 = new Element("div").addClass("gridItem").insertChildren(0, product2Title, product2Link);
+
+        Element productLister = new Element("div").attr("id", "productLister")
+                .insertChildren(0, gridItem1, gridItem2);
+
+
+        body.insertChildren(0, productLister);
+    }
+
     @Before
     public void before() {
+        body = new Element("body");
+        buildHTMLStub();
         when(webScraper.parseWebpage(anyString())).thenReturn(document);
         when(document.body()).thenReturn(body);
-        buildHTMLStub();
     }
 
     @Test
@@ -66,31 +79,12 @@ public class BerriesCherriesCurrantsScraperTest {
     @Test
     public void getProducts_shouldReturnProducts_includingTheProductName() {
         List<ProductSummary> products = scraper.getProducts();
-        List<ProductSummary> expected = List.of(
+        ProductSummary[] expected = {
                 new ProductSummary(PRODUCT1_NAME, PRODUCT1_URL),
                 new ProductSummary(PRODUCT2_NAME, PRODUCT2_URL)
-        );
-        assertThat(products).containsExactlyElementsOf(expected);
+        };
+        assertThat(products).containsExactlyInAnyOrder(expected);
     }
 
-    private void buildHTMLStub() {
-        when(body.getElementById("productLister")).thenReturn(productLister);
-        Elements gridItems = new Elements(List.of(gridItem1, gridItem2));
-        when(productLister.getElementsByClass("gridItem")).thenReturn(gridItems);
 
-        Element product1Name = new Element("div").text(PRODUCT1_NAME);
-        Elements product1 = new Elements(product1Name);
-        Element product2Name = new Element("div").text(PRODUCT2_NAME);
-        Elements product2 = new Elements(product2Name);
-
-        Element product1Link = new Element("a").attr("abs:href", PRODUCT1_URL);
-        Elements product1Links = new Elements(product1Link);
-        Element product2Link = new Element("a").attr("abs:href", PRODUCT2_URL);
-        Elements product2Links = new Elements(product2Link);
-
-        when(gridItem1.getElementsByClass("productNameAndPromotions")).thenReturn(product1);
-        when(gridItem2.getElementsByClass("productNameAndPromotions")).thenReturn(product2);
-        when(gridItem1.getElementsByTag("a")).thenReturn(product1Links);
-        when(gridItem2.getElementsByTag("a")).thenReturn(product2Links);
-    }
 }
