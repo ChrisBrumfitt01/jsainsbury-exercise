@@ -37,15 +37,17 @@ public class ProductScraperTest {
         when(webScraper.parseWebpage(URL)).thenReturn(document);
         when(document.body()).thenReturn(body);
 
+        Element pricingElement = new Element("p").addClass("pricePerUnit").text("£1.50/unit");
+
         Element kcalElement = new Element("div").text("32kcal");
         Element nutritionTable = new Element("table").addClass("nutritionTable").insertChildren(0, kcalElement);
 
         Element productTitle = new Element("h1").text(TITLE);
         Element productSummary = new Element("div").addClass("productSummary").insertChildren(0, productTitle);
 
-
         body.insertChildren(0, productSummary);
         body.insertChildren(1, nutritionTable);
+        body.insertChildren(2, pricingElement);
     }
 
     @Test
@@ -58,6 +60,12 @@ public class ProductScraperTest {
     public void shouldParseUrl_andReturnTheProductKcalPer100g() {
         Product product = productScraper.getProductDetails(URL);
         assertThat(product.getKcalPer100g().get()).isEqualTo(32);
+    }
+
+    @Test
+    public void shouldParseUrl_andReturnTheProductPricePerUnit() {
+        Product product = productScraper.getProductDetails(URL);
+        assertThat(product.getUnitPrice()).isEqualTo(1.50);
     }
 
 }
