@@ -1,6 +1,6 @@
 package com.jsainsbury.serversidetest.scrapers;
 
-import com.jsainsbury.serversidetest.model.Product;
+import com.jsainsbury.serversidetest.model.ProductSummary;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -27,7 +27,10 @@ public class BerriesCherriesCurrantsScraperTest {
             "/webapp/wcs/stores/servlet/gb/groceries/berries-cherries-currants6039.html";
 
     private static final String PRODUCT1_NAME = "Berries";
+    private static final String PRODUCT1_URL = "www.sainsburys.com/berries";
     private static final String PRODUCT2_NAME = "Cherries";
+    private static final String PRODUCT2_URL = "www.sainsburys.com/cherries";
+
 
     @Mock private WebScraper webScraper;
 
@@ -40,7 +43,6 @@ public class BerriesCherriesCurrantsScraperTest {
 
     @InjectMocks
     private BerriesCherriesCurrantsScraper scraper;
-
 
     @Before
     public void before() {
@@ -63,8 +65,12 @@ public class BerriesCherriesCurrantsScraperTest {
 
     @Test
     public void getProducts_shouldReturnProducts_includingTheProductName() {
-        List<Product> products = scraper.getProducts();
-        assertThat(products.stream().map(Product::getTitle)).containsExactlyInAnyOrder(PRODUCT1_NAME, PRODUCT2_NAME);
+        List<ProductSummary> products = scraper.getProducts();
+        List<ProductSummary> expected = List.of(
+                new ProductSummary(PRODUCT1_NAME, PRODUCT1_URL),
+                new ProductSummary(PRODUCT2_NAME, PRODUCT2_URL)
+        );
+        assertThat(products).containsExactlyElementsOf(expected);
     }
 
     private void buildHTMLStub() {
@@ -77,7 +83,14 @@ public class BerriesCherriesCurrantsScraperTest {
         Element product2Name = new Element("div").text(PRODUCT2_NAME);
         Elements product2 = new Elements(product2Name);
 
+        Element product1Link = new Element("a").attr("abs:href", PRODUCT1_URL);
+        Elements product1Links = new Elements(product1Link);
+        Element product2Link = new Element("a").attr("abs:href", PRODUCT2_URL);
+        Elements product2Links = new Elements(product2Link);
+
         when(gridItem1.getElementsByClass("productNameAndPromotions")).thenReturn(product1);
         when(gridItem2.getElementsByClass("productNameAndPromotions")).thenReturn(product2);
+        when(gridItem1.getElementsByTag("a")).thenReturn(product1Links);
+        when(gridItem2.getElementsByTag("a")).thenReturn(product2Links);
     }
 }
