@@ -12,7 +12,7 @@ public class ProductScraper {
     public Product getProductDetails(String url) {
         Element page = webScraper.parseWebpage(url).body();
 
-        return new Product(getTitle(page), null, 0, null);
+        return new Product(getTitle(page), getkcalPer100g(page), 0, null);
     }
 
     private String getTitle(Element element) {
@@ -21,12 +21,12 @@ public class ProductScraper {
                 .text();
     }
 
-//    private int getkcalPer100g(Element element) {
-//        String kcal = element.getElementsByClass("nutritionTable").get(0)
-//                .getElementsContainingText("kcal").get(0)
-//                .text();
-//
-//        return Integer.parseInt(kcal.substring(0, kcal.indexOf("k")));
-//    }
+    private int getkcalPer100g(Element element) {
+        String kcal = element.getElementsByClass("nutritionTable").get(0)
+                .getElementsContainingText("kcal").get(0)
+                .text();
+
+        return Integer.parseInt(kcal.substring(0, kcal.indexOf("k")));
+    }
 
 }
