@@ -7,6 +7,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Component
@@ -22,7 +23,7 @@ public class ProductScraper {
 
         return new Product(
                 getTitle(page),
-                getkcalPer100g(page),
+                getkcalPer100g(page).orElse(null),
                 getPricePerUnit(page),
                 getDescription(page)
         );
@@ -35,10 +36,10 @@ public class ProductScraper {
     }
 
     //TODO: Refactor this
-    private Integer getkcalPer100g(Element element) {
+    private Optional<Integer> getkcalPer100g(Element element) {
         Elements nutritionalTable = element.getElementsByClass("nutritionTable");
         if(nutritionalTable.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
         String nutritionalInfo = element.getElementsByClass("nutritionTable").get(0)
@@ -55,7 +56,7 @@ public class ProductScraper {
                     .split(" ")[0];
         }
 
-        return Integer.parseInt(kcal);
+        return Optional.of(Integer.parseInt(kcal));
     }
 
     private double getPricePerUnit(Element element) {
