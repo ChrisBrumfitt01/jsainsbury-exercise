@@ -3,7 +3,9 @@ package com.jsainsbury.serversidetest.scrapers;
 import com.jsainsbury.serversidetest.model.Product;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ProductScraper {
 
     @Autowired private WebScraper webScraper;
