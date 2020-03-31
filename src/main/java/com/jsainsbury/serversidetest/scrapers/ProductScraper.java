@@ -8,11 +8,15 @@ public class ProductScraper {
 
     @Autowired private WebScraper webScraper;
 
-
     public Product getProductDetails(String url) {
         Element page = webScraper.parseWebpage(url).body();
 
-        return new Product(getTitle(page), getkcalPer100g(page), getPricePerUnit(page), null);
+        return new Product(
+                getTitle(page),
+                getkcalPer100g(page),
+                getPricePerUnit(page),
+                getDescription(page)
+        );
     }
 
     private String getTitle(Element element) {
@@ -35,6 +39,12 @@ public class ProductScraper {
                 .trim();
 
         return Double.parseDouble(pricing.substring(1, pricing.indexOf("/")));
+    }
+
+    private String getDescription(Element element) {
+        return element.getElementById("information")
+                .getElementsByClass("productText").get(0)
+                .text();
     }
 
 }

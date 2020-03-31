@@ -20,6 +20,7 @@ public class ProductScraperTest {
 
     private static final String URL = "www.sainsburys.com/strawberries";
     private static final String TITLE = "Strawberries 500g";
+    private static final String DESCRIPTION = "500g of strawberries by Sainsburys";
 
     @Mock
     private WebScraper webScraper;
@@ -39,6 +40,9 @@ public class ProductScraperTest {
 
         Element pricingElement = new Element("p").addClass("pricePerUnit").text("£1.50/unit");
 
+        Element description = new Element("p").addClass("productText").text(DESCRIPTION);
+        Element information = new Element("div").attr("id", "information").insertChildren(0, description);
+
         Element kcalElement = new Element("div").text("32kcal");
         Element nutritionTable = new Element("table").addClass("nutritionTable").insertChildren(0, kcalElement);
 
@@ -48,6 +52,7 @@ public class ProductScraperTest {
         body.insertChildren(0, productSummary);
         body.insertChildren(1, nutritionTable);
         body.insertChildren(2, pricingElement);
+        body.insertChildren(3, information);
     }
 
     @Test
@@ -66,6 +71,12 @@ public class ProductScraperTest {
     public void shouldParseUrl_andReturnTheProductPricePerUnit() {
         Product product = productScraper.getProductDetails(URL);
         assertThat(product.getUnitPrice()).isEqualTo(1.50);
+    }
+
+    @Test
+    public void shouldParseUrl_andReturnTheProductDescription() {
+        Product product = productScraper.getProductDetails(URL);
+        assertThat(product.getDescription()).isEqualTo(DESCRIPTION);
     }
 
 }
