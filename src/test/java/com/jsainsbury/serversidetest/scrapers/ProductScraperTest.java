@@ -43,17 +43,15 @@ public class ProductScraperTest {
         Element description = new Element("p").addClass("productText").text(DESCRIPTION);
         Element information = new Element("div").attr("id", "information").insertChildren(0, description);
 
-        Element kcalElement = new Element("div").text("32kcal");
-        Element nutritionTable = new Element("table").addClass("nutritionTable").insertChildren(0, kcalElement);
-
         Element productTitle = new Element("h1").text(TITLE);
         Element productSummary = new Element("div").addClass("productSummary").insertChildren(0, productTitle);
 
         body.insertChildren(0, productSummary);
-        body.insertChildren(1, nutritionTable);
-        body.insertChildren(2, pricingElement);
-        body.insertChildren(3, information);
+        body.insertChildren(1, pricingElement);
+        body.insertChildren(2, information);
     }
+
+
 
     @Test
     public void shouldParseUrl_andReturnTheProductTitle() {
@@ -63,8 +61,16 @@ public class ProductScraperTest {
 
     @Test
     public void shouldParseUrl_andReturnTheProductKcalPer100g() {
+        addKcalInfo();
         Product product = productScraper.getProductDetails(URL);
         assertThat(product.getKcalPer100g().get()).isEqualTo(32);
+    }
+
+    @Test
+    public void shouldParseUrl_andReturnTheProductKcalPer100g_whenPageLayoutIsInAlternativeFormat() {
+        addKcalInfoAlternateFormat();
+        Product product = productScraper.getProductDetails(URL);
+        assertThat(product.getKcalPer100g().get()).isEqualTo(52);
     }
 
     @Test
@@ -77,6 +83,19 @@ public class ProductScraperTest {
     public void shouldParseUrl_andReturnTheProductDescription() {
         Product product = productScraper.getProductDetails(URL);
         assertThat(product.getDescription()).isEqualTo(DESCRIPTION);
+    }
+
+    private void addKcalInfo() {
+        Element kcalElement = new Element("div").text("32kcal");
+        Element nutritionTable = new Element("table").addClass("nutritionTable").insertChildren(0, kcalElement);
+        body.insertChildren(3, nutritionTable);
+    }
+
+    private void addKcalInfoAlternateFormat() {
+        Element kcalElement = new Element("div").text("Some info kcal 52 Some more info");
+        Element nutritionTable = new Element("table").addClass("nutritionTable").insertChildren(0, kcalElement);
+        body.insertChildren(3, nutritionTable);
+
     }
 
 }

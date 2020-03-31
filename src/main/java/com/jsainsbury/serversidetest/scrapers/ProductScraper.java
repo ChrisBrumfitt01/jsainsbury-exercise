@@ -1,16 +1,23 @@
 package com.jsainsbury.serversidetest.scrapers;
 
 import com.jsainsbury.serversidetest.model.Product;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.logging.Logger;
 
 @Component
 public class ProductScraper {
 
+    private static final Logger LOG = Logger.getLogger(ProductScraper.class.getName());
+
     @Autowired private WebScraper webScraper;
 
     public Product getProductDetails(String url) {
+        LOG.info("Parsing the product page: " + url);
         Element page = webScraper.parseWebpage(url).body();
 
         return new Product(
@@ -27,12 +34,28 @@ public class ProductScraper {
                 .text();
     }
 
-    private int getkcalPer100g(Element element) {
-        String kcal = element.getElementsByClass("nutritionTable").get(0)
+    //TODO: Refactor this
+    private Integer getkcalPer100g(Element element) {
+        Elements nutritionalTable = element.getElementsByClass("nutritionTable");
+        if(nutritionalTable.isEmpty()) {
+            return null;
+        }
+
+        String nutritionalInfo = element.getElementsByClass("nutritionTable").get(0)
                 .getElementsContainingText("kcal").get(0)
                 .text();
 
-        return Integer.parseInt(kcal.substring(0, kcal.indexOf("k")));
+        String[] infoParts = nutritionalInfo.split("kcal")[0]
+                .split(" ");
+
+        String kcal = infoParts[infoParts.length-1];
+        if(!NumberUtils.isCreatable(kcal)) {
+            kcal = nutritionalInfo.split("kcal")[1]
+                    .trim()
+                    .split(" ")[0];
+        }
+
+        return Integer.parseInt(kcal);
     }
 
     private double getPricePerUnit(Element element) {
