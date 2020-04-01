@@ -21,7 +21,6 @@ public class JsonMapper<T> {
       json = objectMapper.writeValueAsString(t);
     } catch (JsonProcessingException e) {
       LOG.log(Level.WARNING, "Could not convert object to JSON");
-      System.exit(1);
     }
 
     return json;

@@ -1,5 +1,6 @@
 package com.jsainsbury.serversidetest;
 
+import com.jsainsbury.serversidetest.config.UrlConfig;
 import com.jsainsbury.serversidetest.model.ProductResults;
 import com.jsainsbury.serversidetest.services.BerriesCherriesCurrantsService;
 import com.jsainsbury.serversidetest.services.JsonMapper;
@@ -14,6 +15,7 @@ public class ServersideTestApplication implements CommandLineRunner {
 
     @Autowired private BerriesCherriesCurrantsService service;
     @Autowired private JsonMapper<ProductResults> jsonMapper;
+    @Autowired private UrlConfig uriConfig;
 
     public static void main(String[] args) {
         SpringApplication.run(ServersideTestApplication.class, args);

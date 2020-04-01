@@ -1,5 +1,6 @@
 package com.jsainsbury.serversidetest.scrapers;
 
+import com.jsainsbury.serversidetest.config.UrlConfig;
 import com.jsainsbury.serversidetest.model.ProductSummary;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,9 +14,7 @@ import java.util.stream.Collectors;
 @Component
 public class BerriesCherriesCurrantsScraper implements PageScraper {
 
-    private static final String URL = "https://jsainsburyplc.github.io/serverside-test/site/www.sainsburys.co.uk" +
-            "/webapp/wcs/stores/servlet/gb/groceries/berries-cherries-currants6039.html";
-
+    @Autowired private UrlConfig urlConfig;
     @Autowired private WebScraper webScraper;
 
     public List<ProductSummary> getProducts() {
@@ -29,7 +28,7 @@ public class BerriesCherriesCurrantsScraper implements PageScraper {
     }
 
     private Element parse() {
-        Document doc = webScraper.parseWebpage(URL);
+        Document doc = webScraper.parseWebpage(urlConfig.getBerriesCherriesCurrantsUrl());
         return doc.body();
     }
 

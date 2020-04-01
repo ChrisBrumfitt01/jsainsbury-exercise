@@ -21,7 +21,6 @@ public class WebScraper {
                     .get();
         } catch (IOException e) {
             LOG.log(Level.SEVERE, String.format("Could not parse the URL: %s", url));
-            System.exit(1);
         }
 
         return document;
