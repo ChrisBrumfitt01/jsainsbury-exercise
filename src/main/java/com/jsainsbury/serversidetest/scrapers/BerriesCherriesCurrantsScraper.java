@@ -11,17 +11,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class BerriesCherriesCurrantsScraper {
+public class BerriesCherriesCurrantsScraper implements PageScraper {
 
     private static final String URL = "https://jsainsburyplc.github.io/serverside-test/site/www.sainsburys.co.uk" +
             "/webapp/wcs/stores/servlet/gb/groceries/berries-cherries-currants6039.html";
 
     @Autowired private WebScraper webScraper;
-
-    public Element parse() {
-        Document doc = webScraper.parseWebpage(URL);
-        return doc.body();
-    }
 
     public List<ProductSummary> getProducts() {
         Elements rawProducts = parse()
@@ -33,6 +28,10 @@ public class BerriesCherriesCurrantsScraper {
                 .collect(Collectors.toList());
     }
 
+    private Element parse() {
+        Document doc = webScraper.parseWebpage(URL);
+        return doc.body();
+    }
 
     private String getProductTitle(Element element) {
         return element.getElementsByClass("productNameAndPromotions").get(0).text();
