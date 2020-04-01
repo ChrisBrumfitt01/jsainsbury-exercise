@@ -1,9 +1,9 @@
 package com.jsainsbury.serversidetest.scrapers;
 
 import com.jsainsbury.serversidetest.model.Product;
-import org.apache.commons.lang3.math.NumberUtils;
+import com.jsainsbury.serversidetest.scrapers.kcalparsers.KcalParser;
+import java.util.List;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,13 @@ public class ProductScraper {
 
     private static final Logger LOG = Logger.getLogger(ProductScraper.class.getName());
 
-    @Autowired private WebScraper webScraper;
+    private WebScraper webScraper;
+    private List<KcalParser> kcalParsers;
+
+    public ProductScraper(WebScraper webScraper, List<KcalParser> kcalParsers) {
+        this.webScraper = webScraper;
+        this.kcalParsers = kcalParsers;
+    }
 
     public Product getProductDetails(String url) {
         LOG.info("Parsing the product page: " + url);
@@ -35,28 +41,14 @@ public class ProductScraper {
                 .text();
     }
 
-    //TODO: Refactor this
     private Optional<Integer> getkcalPer100g(Element element) {
-        Elements nutritionalTable = element.getElementsByClass("nutritionTable");
-        if(nutritionalTable.isEmpty()) {
-            return Optional.empty();
+        for(KcalParser kcalParser : kcalParsers) {
+            Optional<Integer> kcal = kcalParser.getKcalPer100g(element);
+            if(kcal.isPresent()) {
+                return kcal;
+            }
         }
-
-        String nutritionalInfo = element.getElementsByClass("nutritionTable").get(0)
-                .getElementsContainingText("kcal").get(0)
-                .text();
-
-        String[] infoParts = nutritionalInfo.split("kcal")[0]
-                .split(" ");
-
-        String kcal = infoParts[infoParts.length-1];
-        if(!NumberUtils.isCreatable(kcal)) {
-            kcal = nutritionalInfo.split("kcal")[1]
-                    .trim()
-                    .split(" ")[0];
-        }
-
-        return Optional.of(Integer.parseInt(kcal));
+        return Optional.empty();
     }
 
     private double getPricePerUnit(Element element) {

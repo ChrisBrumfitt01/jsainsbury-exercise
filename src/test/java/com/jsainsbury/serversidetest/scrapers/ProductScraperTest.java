@@ -1,17 +1,21 @@
 package com.jsainsbury.serversidetest.scrapers;
 
 import com.jsainsbury.serversidetest.model.Product;
+import com.jsainsbury.serversidetest.scrapers.kcalparsers.KcalParserStrategyOne;
+import com.jsainsbury.serversidetest.scrapers.kcalparsers.KcalParserStrategyTwo;
+import java.util.List;
+import java.util.Optional;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -22,18 +26,21 @@ public class ProductScraperTest {
     private static final String TITLE = "Strawberries 500g";
     private static final String DESCRIPTION = "500g of strawberries by Sainsburys";
 
-    @Mock
-    private WebScraper webScraper;
-
+    @Mock private WebScraper webScraper;
     @Mock private Document document;
+
+    @Mock private KcalParserStrategyOne kcalParserOne;
+    @Mock private KcalParserStrategyTwo kcalParserTwo;
     private Element body;
 
-    @InjectMocks
     private ProductScraper productScraper;
 
 
     @Before
     public void before() {
+        productScraper = new ProductScraper(webScraper, List.of(kcalParserOne, kcalParserTwo));
+        when(kcalParserOne.getKcalPer100g(any())).thenReturn(Optional.of(20));
+
         body = new Element("body");
         when(webScraper.parseWebpage(URL)).thenReturn(document);
         when(document.body()).thenReturn(body);
@@ -60,17 +67,26 @@ public class ProductScraperTest {
     }
 
     @Test
-    public void shouldParseUrl_andReturnTheProductKcalPer100g() {
-        addKcalInfo();
+    public void shouldParseUrl_andReturnTheProductKcalPer100g_whenFirstStrategyReturnsAValue() {
+        when(kcalParserOne.getKcalPer100g(body)).thenReturn(Optional.of(32));
         Product product = productScraper.getProductDetails(URL);
         assertThat(product.getKcalPer100g().get()).isEqualTo(32);
     }
 
     @Test
-    public void shouldParseUrl_andReturnTheProductKcalPer100g_whenPageLayoutIsInAlternativeFormat() {
-        addKcalInfoAlternateFormat();
+    public void shouldParseUrl_andReturnTheProductKcalPer100g_whenSecondStrategyReturnsAValue() {
+        when(kcalParserOne.getKcalPer100g(body)).thenReturn(Optional.empty());
+        when(kcalParserTwo.getKcalPer100g(body)).thenReturn(Optional.of(32));
         Product product = productScraper.getProductDetails(URL);
-        assertThat(product.getKcalPer100g().get()).isEqualTo(52);
+        assertThat(product.getKcalPer100g().get()).isEqualTo(32);
+    }
+
+    @Test
+    public void shouldParseUrl_andSetTheKcalPer100gToEmpty_whenKcalIsNotPresent() {
+        when(kcalParserOne.getKcalPer100g(body)).thenReturn(Optional.empty());
+        when(kcalParserTwo.getKcalPer100g(body)).thenReturn(Optional.empty());
+        Product product = productScraper.getProductDetails(URL);
+        assertThat(product.getKcalPer100g()).isEmpty();
     }
 
     @Test
