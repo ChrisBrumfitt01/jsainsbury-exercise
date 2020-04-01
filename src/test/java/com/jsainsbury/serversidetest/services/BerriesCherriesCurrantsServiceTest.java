@@ -1,5 +1,6 @@
 package com.jsainsbury.serversidetest.services;
 
+import com.jsainsbury.serversidetest.config.PropsConfig;
 import com.jsainsbury.serversidetest.model.Product;
 import com.jsainsbury.serversidetest.model.ProductResults;
 import com.jsainsbury.serversidetest.model.ProductSummary;
@@ -31,6 +32,7 @@ public class BerriesCherriesCurrantsServiceTest {
 
     @Mock private ProductScraper productScraper;
     @Mock private BerriesCherriesCurrantsScraper berriesCherriesCurrantsScraper;
+    @Mock private PropsConfig propsConfig;
 
     @InjectMocks
     private BerriesCherriesCurrantsService service;
@@ -41,6 +43,7 @@ public class BerriesCherriesCurrantsServiceTest {
         when(productScraper.getProductDetails(PRODUCT1_URL)).thenReturn(product1);
         when(productScraper.getProductDetails(PRODUCT2_URL)).thenReturn(product2);
         when(productScraper.getProductDetails(PRODUCT3_URL)).thenReturn(product3);
+        when(propsConfig.getVatRate()).thenReturn(0.2);
     }
 
     @Test

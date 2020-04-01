@@ -1,5 +1,6 @@
 package com.jsainsbury.serversidetest.services;
 
+import com.jsainsbury.serversidetest.config.PropsConfig;
 import com.jsainsbury.serversidetest.model.Product;
 import com.jsainsbury.serversidetest.model.ProductResults;
 import com.jsainsbury.serversidetest.model.Total;
@@ -18,6 +19,7 @@ public class BerriesCherriesCurrantsService {
 
     @Autowired private BerriesCherriesCurrantsScraper berriesCherriesCurrantsScraper;
     @Autowired private ProductScraper productScraper;
+    @Autowired private PropsConfig propsConfig;
 
     public ProductResults getProductDetails() {
         List<Product> products = berriesCherriesCurrantsScraper.getProducts().stream()
@@ -32,9 +34,8 @@ public class BerriesCherriesCurrantsService {
     }
 
     private double calculateVAT(double total) {
-        //TODO: Move VAT value to config
         BigDecimal divisor = BigDecimal.ONE
-                .divide(BigDecimal.valueOf(0.2), 2, RoundingMode.HALF_UP)
+                .divide(BigDecimal.valueOf(propsConfig.getVatRate()), 2, RoundingMode.HALF_UP)
                 .add(BigDecimal.ONE);
 
         return BigDecimal.valueOf(total)
