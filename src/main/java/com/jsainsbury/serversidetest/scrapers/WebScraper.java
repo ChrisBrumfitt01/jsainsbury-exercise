@@ -14,13 +14,17 @@ public class WebScraper {
     private static final Logger LOG = Logger.getLogger(WebScraper.class.getName());
 
     public Document parseWebpage(String url) {
+        Document document = null;
+
         try {
-            return Jsoup.connect(url)
+            document = Jsoup.connect(url)
                     .get();
         } catch (IOException e) {
             LOG.log(Level.SEVERE, String.format("Could not parse the URL: %s", url));
-            return null; //TODO: Replace with Exception handler
+            System.exit(1);
         }
+
+        return document;
     }
 
 }

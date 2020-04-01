@@ -16,12 +16,15 @@ public class JsonMapper<T> {
   private ObjectMapper objectMapper;
 
   public String convertToJson(T t) {
+    String json = null;
     try {
-      return objectMapper.writeValueAsString(t);
+      json = objectMapper.writeValueAsString(t);
     } catch (JsonProcessingException e) {
       LOG.log(Level.WARNING, "Could not convert object to JSON");
-      return null;
+      System.exit(1);
     }
+
+    return json;
   }
 
 }
