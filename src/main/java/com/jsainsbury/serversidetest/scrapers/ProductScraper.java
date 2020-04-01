@@ -2,9 +2,9 @@ package com.jsainsbury.serversidetest.scrapers;
 
 import com.jsainsbury.serversidetest.model.Product;
 import com.jsainsbury.serversidetest.scrapers.kcalparsers.KcalParser;
+import java.math.BigDecimal;
 import java.util.List;
 import org.jsoup.nodes.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -30,7 +30,7 @@ public class ProductScraper {
         return new Product(
                 getTitle(page),
                 getkcalPer100g(page).orElse(null),
-                getPricePerUnit(page),
+                BigDecimal.valueOf(getPricePerUnit(page)),
                 getDescription(page)
         );
     }

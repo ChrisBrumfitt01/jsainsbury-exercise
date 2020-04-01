@@ -27,20 +27,19 @@ public class BerriesCherriesCurrantsService {
                 .collect(Collectors.toList());
 
         double total = products.stream()
-                .mapToDouble(Product::getUnitPrice)
+                .mapToDouble(product -> product.getUnitPrice().doubleValue())
                 .sum();
 
-        return new ProductResults(products, new Total(total, calculateVAT(total)));
+        return new ProductResults(products, new Total(BigDecimal.valueOf(total), calculateVAT(total)));
     }
 
-    private double calculateVAT(double total) {
+    private BigDecimal calculateVAT(double total) {
         BigDecimal divisor = BigDecimal.ONE
                 .divide(BigDecimal.valueOf(propsConfig.getVatRate()), 2, RoundingMode.HALF_UP)
                 .add(BigDecimal.ONE);
 
         return BigDecimal.valueOf(total)
-                .divide(divisor, 2, RoundingMode.HALF_UP)
-                .doubleValue();
+                .divide(divisor, 2, RoundingMode.HALF_UP);
     }
 
 }

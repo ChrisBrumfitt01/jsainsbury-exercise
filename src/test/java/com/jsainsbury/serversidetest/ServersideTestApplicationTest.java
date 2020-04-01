@@ -8,6 +8,7 @@ import com.jsainsbury.serversidetest.model.ProductResults;
 import com.jsainsbury.serversidetest.model.Total;
 import com.jsainsbury.serversidetest.services.BerriesCherriesCurrantsService;
 import com.jsainsbury.serversidetest.services.JsonMapper;
+import java.math.BigDecimal;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,7 @@ public class ServersideTestApplicationTest {
 
   @Test
   public void shouldGetProductsFromTheService_andMapToJson() {
-    ProductResults results = new ProductResults(List.of(), new Total(1.0, 2.0));
+    ProductResults results = new ProductResults(List.of(), new Total(BigDecimal.valueOf(1), BigDecimal.valueOf(2)));
     when(service.getProductDetails()).thenReturn(results);
     application.run();
     verify(jsonMapper).convertToJson(results);

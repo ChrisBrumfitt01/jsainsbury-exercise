@@ -3,6 +3,8 @@ package com.jsainsbury.serversidetest.scrapers;
 import com.jsainsbury.serversidetest.model.Product;
 import com.jsainsbury.serversidetest.scrapers.kcalparsers.KcalParserStrategyOne;
 import com.jsainsbury.serversidetest.scrapers.kcalparsers.KcalParserStrategyTwo;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 import org.jsoup.nodes.Document;
@@ -92,7 +94,8 @@ public class ProductScraperTest {
     @Test
     public void shouldParseUrl_andReturnTheProductPricePerUnit() {
         Product product = productScraper.getProductDetails(URL);
-        assertThat(product.getUnitPrice()).isEqualTo(1.50);
+        BigDecimal expected = BigDecimal.valueOf(1.5).setScale(2, RoundingMode.HALF_UP);
+        assertThat(product.getUnitPrice()).isEqualTo(expected);
     }
 
     @Test
