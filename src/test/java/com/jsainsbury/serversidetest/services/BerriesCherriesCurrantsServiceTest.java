@@ -5,7 +5,6 @@ import com.jsainsbury.serversidetest.model.Product;
 import com.jsainsbury.serversidetest.model.ProductResults;
 import com.jsainsbury.serversidetest.model.ProductSummary;
 import com.jsainsbury.serversidetest.scrapers.BerriesCherriesCurrantsScraper;
-import com.jsainsbury.serversidetest.scrapers.ProductScraper;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import org.junit.Before;
@@ -32,7 +31,7 @@ public class BerriesCherriesCurrantsServiceTest {
     private Product product2 = new Product("Product2", 20, BigDecimal.valueOf(2), "Product 2 description");
     private Product product3 = new Product("Product3", 30, BigDecimal.valueOf(4), "Product 3 description");
 
-    @Mock private ProductScraper productScraper;
+    @Mock private ConcurrentProductService concurrentProductService;
     @Mock private BerriesCherriesCurrantsScraper berriesCherriesCurrantsScraper;
     @Mock private PropsConfig propsConfig;
 
@@ -41,10 +40,9 @@ public class BerriesCherriesCurrantsServiceTest {
 
     @Before
     public void before() {
-        when(berriesCherriesCurrantsScraper.getProducts()).thenReturn(buildProductSummaries());
-        when(productScraper.getProductDetails(PRODUCT1_URL)).thenReturn(product1);
-        when(productScraper.getProductDetails(PRODUCT2_URL)).thenReturn(product2);
-        when(productScraper.getProductDetails(PRODUCT3_URL)).thenReturn(product3);
+        List<ProductSummary> productSummaries = buildProductSummaries();
+        when(berriesCherriesCurrantsScraper.getProducts()).thenReturn(productSummaries);
+        when(concurrentProductService.getProducts(productSummaries)).thenReturn(List.of(product1, product2, product3));
         when(propsConfig.getVatRate()).thenReturn(0.2);
     }
 

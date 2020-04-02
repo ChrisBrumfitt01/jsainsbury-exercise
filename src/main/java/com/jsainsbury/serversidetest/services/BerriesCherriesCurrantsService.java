@@ -3,32 +3,31 @@ package com.jsainsbury.serversidetest.services;
 import com.jsainsbury.serversidetest.config.PropsConfig;
 import com.jsainsbury.serversidetest.model.Product;
 import com.jsainsbury.serversidetest.model.ProductResults;
+import com.jsainsbury.serversidetest.model.ProductSummary;
 import com.jsainsbury.serversidetest.model.Total;
 import com.jsainsbury.serversidetest.scrapers.BerriesCherriesCurrantsScraper;
-import com.jsainsbury.serversidetest.scrapers.ProductScraper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class BerriesCherriesCurrantsService {
 
     @Autowired private BerriesCherriesCurrantsScraper berriesCherriesCurrantsScraper;
-    @Autowired private ProductScraper productScraper;
     @Autowired private PropsConfig propsConfig;
+
+    @Autowired private ConcurrentProductService concurrentProductService;
 
     /**
      * Parses the Berries, Cherries & Currants page and returns details for the products on the page
      * @return The ProductResults
      */
     public ProductResults getProductDetails() {
-        List<Product> products = berriesCherriesCurrantsScraper.getProducts().stream()
-                .map(summary -> productScraper.getProductDetails(summary.getUrl()))
-                .collect(Collectors.toList());
+        List<ProductSummary> productSummaries = berriesCherriesCurrantsScraper.getProducts();
+        List<Product> products = concurrentProductService.getProducts(productSummaries);
 
         double total = products.stream()
                 .mapToDouble(product -> product.getUnitPrice().doubleValue())
@@ -45,5 +44,7 @@ public class BerriesCherriesCurrantsService {
         return BigDecimal.valueOf(total)
                 .divide(divisor, 2, RoundingMode.HALF_UP);
     }
+
+
 
 }
