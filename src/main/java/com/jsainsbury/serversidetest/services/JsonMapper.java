@@ -15,6 +15,11 @@ public class JsonMapper<T> {
   @Autowired
   private ObjectMapper objectMapper;
 
+  /**
+   * Takes an object and converts it to a JSON string
+   * @param t The object to convert
+   * @return The JSON string
+   */
   public String convertToJson(T t) {
     String json = null;
     try {

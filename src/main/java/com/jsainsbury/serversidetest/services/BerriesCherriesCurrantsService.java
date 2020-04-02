@@ -21,6 +21,10 @@ public class BerriesCherriesCurrantsService {
     @Autowired private ProductScraper productScraper;
     @Autowired private PropsConfig propsConfig;
 
+    /**
+     * Parses the Berries, Cherries & Currants page and returns details for the products on the page
+     * @return The ProductResults
+     */
     public ProductResults getProductDetails() {
         List<Product> products = berriesCherriesCurrantsScraper.getProducts().stream()
                 .map(summary -> productScraper.getProductDetails(summary.getUrl()))

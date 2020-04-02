@@ -10,6 +10,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * This application will parse the web page for Berries, Cherries and Currants and output a
+ * JSON string detailing the product details (title, unit price, kcal per 100g and description).
+ * Also includes the gross and vat total.
+ */
 @SpringBootApplication
 public class ServersideTestApplication implements CommandLineRunner {
 
