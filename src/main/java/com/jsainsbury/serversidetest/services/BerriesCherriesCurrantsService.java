@@ -36,6 +36,11 @@ public class BerriesCherriesCurrantsService {
         return new ProductResults(products, new Total(BigDecimal.valueOf(total), calculateVAT(total)));
     }
 
+    /**
+     * Calculates the VAT of a given value, to two decimal places
+     * @param total The given value
+     * @return The amount of the given value which is VAT
+     */
     private BigDecimal calculateVAT(double total) {
         BigDecimal divisor = BigDecimal.ONE
                 .divide(BigDecimal.valueOf(propsConfig.getVatRate()), 2, RoundingMode.HALF_UP)

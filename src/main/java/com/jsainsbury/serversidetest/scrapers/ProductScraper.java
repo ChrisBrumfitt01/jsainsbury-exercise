@@ -23,6 +23,11 @@ public class ProductScraper {
         this.kcalParsers = kcalParsers;
     }
 
+    /**
+     * Parses the product page for a given product URL and returns the product details
+     * @param url The Product URL
+     * @return The product details
+     */
     public Product getProductDetails(String url) {
         LOG.info("Parsing the product page: " + url);
         Element page = webScraper.parseWebpage(url).body();

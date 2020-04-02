@@ -17,6 +17,10 @@ public class BerriesCherriesCurrantsScraper implements PageScraper {
     @Autowired private UrlConfig urlConfig;
     @Autowired private WebScraper webScraper;
 
+    /**
+     * Parses the Berries, Cherries & Currants web page and returns a ProductSummary for each product on the page
+     * @return The ProductSummary list
+     */
     public List<ProductSummary> getProducts() {
         Elements rawProducts = parse()
                 .getElementById("productLister")

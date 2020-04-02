@@ -28,6 +28,11 @@ public class ConcurrentProductService {
 
   @Autowired private ProductScraper productScraper;
 
+  /**
+   * Given a list of ProductSummary, concurrently retrieves the product details for each
+   * @param productSummaries The product summaries
+   * @return The detailed products
+   */
   public List<Product> getProducts(List<ProductSummary> productSummaries) {
     ExecutorService executorService = null;
     try {

@@ -7,6 +7,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class KcalParserStrategyOne extends KcalParser {
+
+  /**
+   * Attempts to parse the KCAL per 100g within a given web element
+   * @param element The element to parse
+   * @return The Kcal per 100g for the product
+   */
   @Override
   public Optional<Integer> getKcalPer100g(Element element) {
     Optional<String> nutritionalInfo = getNutritionalInfo(element);
