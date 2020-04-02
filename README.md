@@ -11,3 +11,8 @@ Run:
 
 Run:
 `mvn test`
+
+## Assessment
+
+When ran, the application will output the resulting JSON to the console before terminating.
+It will also write the JSON to a file in the root the project, titled *products.json*.
