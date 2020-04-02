@@ -2,6 +2,9 @@ package com.jsainsbury.serversidetest.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +26,13 @@ public class JsonMapper<T> {
   public String convertToJson(T t) {
     String json = null;
     try {
-      json = objectMapper.writeValueAsString(t);
+      ObjectWriter prettyPrinter = objectMapper.writerWithDefaultPrettyPrinter();
+      prettyPrinter.writeValue(new File("products.json"), t);
+      json = prettyPrinter.writeValueAsString(t);
     } catch (JsonProcessingException e) {
       LOG.log(Level.WARNING, "Could not convert object to JSON");
+    } catch (IOException e) {
+      LOG.log(Level.WARNING, "IO error when attempting to write to JSON file");
     }
 
     return json;
