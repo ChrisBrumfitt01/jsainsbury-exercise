@@ -104,17 +104,4 @@ public class ProductScraperTest {
         assertThat(product.getDescription()).isEqualTo(DESCRIPTION);
     }
 
-    private void addKcalInfo() {
-        Element kcalElement = new Element("div").text("32kcal");
-        Element nutritionTable = new Element("table").addClass("nutritionTable").insertChildren(0, kcalElement);
-        body.insertChildren(3, nutritionTable);
-    }
-
-    private void addKcalInfoAlternateFormat() {
-        Element kcalElement = new Element("div").text("Some info kcal 52 Some more info");
-        Element nutritionTable = new Element("table").addClass("nutritionTable").insertChildren(0, kcalElement);
-        body.insertChildren(3, nutritionTable);
-
-    }
-
 }
